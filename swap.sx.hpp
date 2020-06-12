@@ -36,6 +36,7 @@ public:
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
         int64_t             amplifier;
+        name                pricefeed_contract;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -237,6 +238,8 @@ private:
     void check_is_active( const symbol_code symcode, const name contract );
     void check_max_ratio( const symbol_code symcode );
     void check_min_ratio( const asset out );
+
+    void check_price_within_feed();
 
     double get_ratio( const symbol_code symcode );
     asset get_balance( const symbol_code symcode );

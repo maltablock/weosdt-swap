@@ -20,10 +20,11 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // update balances (post convert transfer, triggered by `on_notify`)
     // just mirrors the token contracts accounts row
-    // TODO: why only when from == _self?
+    // only update for outgoing tx (from == _self)
     if ( from == get_self() && ( memo == "convert" || memo == "fee") ) {
         set_balance( quantity.symbol.code() );
         update_spot_prices( base_symbol.code() );
+        check_price_within_feed();
     }
 
     if ( memo == "fund" ) {

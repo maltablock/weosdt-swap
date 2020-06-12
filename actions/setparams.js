@@ -25,6 +25,7 @@ async function action() {
         params: {
           fee: 30,
           amplifier: 1,
+          pricefeed_contract: `globaloracle`,
         },
       },
     });

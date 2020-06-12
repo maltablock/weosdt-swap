@@ -19,6 +19,7 @@ Run the [`setparams` action](./actions/setparams.js) to set up the swap contract
 params: {
     fee: 30,
     amplifier: 1,
+    pricefeed_contract: `globaloracle`,
 },
 ```
 
@@ -46,4 +47,5 @@ Then run the [`token` actions](./actions/token.js) to set up the tokens:
 
 ### Set up liquidity
 
-To transfer liquidity 
+To deposit initial liquidity send a transfer with the `fund` memo.
+

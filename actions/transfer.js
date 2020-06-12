@@ -13,25 +13,8 @@ const TOKEN_ACCOUNT = accounts[2];
 
 async function action() {
   try {
-    await sendTransaction({
-      account: `eosio.token`,
-      name: `transfer`,
-      authorization: [
-        {
-          actor: RECEIVER,
-          permission: `active`,
-        },
-      ],
-      data: {
-        from: RECEIVER,
-        to: CONTRACT_ACCOUNT,
-        quantity: `10.00000000 WAX`,
-        memo: `WEOSDT`,
-      },
-    });
-
     // await sendTransaction({
-    //   account: TOKEN_ACCOUNT,
+    //   account: `eosio.token`,
     //   name: `transfer`,
     //   authorization: [
     //     {
@@ -42,10 +25,27 @@ async function action() {
     //   data: {
     //     from: RECEIVER,
     //     to: CONTRACT_ACCOUNT,
-    //     quantity: `1000.000000000 WEOSDT`,
-    //     memo: `WAX`,
+    //     quantity: `40.00000000 WAX`,
+    //     memo: `WEOSDT`,
     //   },
     // });
+
+    await sendTransaction({
+      account: TOKEN_ACCOUNT,
+      name: `transfer`,
+      authorization: [
+        {
+          actor: RECEIVER,
+          permission: `active`,
+        },
+      ],
+      data: {
+        from: RECEIVER,
+        to: CONTRACT_ACCOUNT,
+        quantity: `1.000000000 WEOSDT`,
+        memo: `WAX`,
+      },
+    });
     process.exit(0);
   } catch (error) {
     console.error(error)
