@@ -3,6 +3,10 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 {
     // authenticate incoming `from` account
     require_auth( from );
+    check(from == get_self() || to == get_self(), "not involved in this transfer");
+
+    // prevent invalid transfers
+    if ( from == get_self() ) check( memo == "convert" || memo == "fee" || memo == "fund", "invalid transfer");
 
     // ignore transfers
     const set<name> ignore = set<name>{
@@ -15,21 +19,21 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
     };
 
     // update balances (post convert transfer, triggered by `on_notify`)
+    // just mirrors the token contracts accounts row
+    // TODO: why only when from == _self?
     if ( from == get_self() && ( memo == "convert" || memo == "fee") ) {
         set_balance( quantity.symbol.code() );
-        update_spot_prices( symbol_code{"USDT"} );
+        update_spot_prices( base_symbol.code() );
     }
 
-    // add/remove liquidity depth (must be sent using `sx` account)
-    if ( from == "sx"_n || to == "sx"_n ) {
+    if ( memo == "fund" ) {
+        // add/remove liquidity depth (must be sent using `sx` account)
         set_balance( quantity.symbol.code() );
-        update_spot_prices( symbol_code{"USDT"} );
+        update_spot_prices( base_symbol.code() );
+        if ( from == get_self() ) sub_depth( quantity );
+        if ( to == get_self() ) add_depth( quantity );
+        return;
     }
-    if ( from == "sx"_n ) return add_depth( quantity );
-    if ( to == "sx"_n ) return sub_depth( quantity );
-
-    // prevent invalid transfers
-    if ( from == get_self() ) check( memo == "convert" || memo == "fee", "invalid transfer");
 
     // ignore transfers
     if ( to != get_self() ) return;
@@ -57,7 +61,7 @@ void swapSx::on_transfer( const name from, const name to, const asset quantity, 
 
     // send transfers
     self_transfer( from, rate, "convert" );
-    self_transfer( "fee.sx"_n, fee, "fee" );
+    self_transfer( fee_account, fee, "fee" );
 
     // post transfer
     update_volume( vector<asset>{ quantity, rate }, fee );

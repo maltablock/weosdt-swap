@@ -11,6 +11,9 @@
 using namespace eosio;
 using namespace std;
 
+constexpr name fee_account = name("cmichelonwax");
+constexpr symbol base_symbol = symbol("WEOSDT", 9);
+
 class [[eosio::contract("swap.sx")]] swapSx : public contract {
 public:
     using contract::contract;
@@ -36,23 +39,6 @@ public:
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
-    /**
-     * ## TABLE `docs`
-     *
-     * - `{string} url` - Documentation url
-     *
-     * ### example
-     *
-     * ```json
-     * {
-     *   "url": "https://github.com/stableex/sx.swap"
-     * }
-     * ```
-     */
-    struct [[eosio::table("docs")]] docs_row {
-        string      url = "https://github.com/stableex/sx.swap";
-    };
-    typedef eosio::singleton< "docs"_n, docs_row > docs;
 
     /**
      * ## TABLE `tokens`

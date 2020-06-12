@@ -3,14 +3,11 @@ void swapSx::setparams( const optional<swapSx::params> params )
 {
     require_auth( get_self() );
     swapSx::settings _settings( get_self(), get_self().value );
-    swapSx::docs _docs( get_self(), get_self().value );
 
     if ( !params ) {
-        _docs.remove();
         _settings.remove();
         return;
     }
-    _docs.get_or_create( get_self() );
 
     check( params->fee <= 50, "fee cannot be greater than 0.5%");
     check( params->fee >= 0, "fee must be positive");

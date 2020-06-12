@@ -15,7 +15,7 @@ asset swapSx::double_to_asset( const double amount, const symbol sym )
 
 symbol_code swapSx::parse_memo_symcode( const string memo )
 {
-    const string error = "`memo` must be symbol code (ex: \"USDT\")";
+    const string error = "`memo` must be symbol code (ex: \"WEOSDT\")";
     check( memo.length() > 0 && memo.length() <= 7 , error );
 
     // must be all uppercase alpha characters
