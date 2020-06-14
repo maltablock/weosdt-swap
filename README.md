@@ -1,4 +1,4 @@
-# WAX <> WEOST Swap Pool with circuit breaker
+# WAX <> WEOSDT Swap Pool with circuit breaker
 
 Based on [SX Swap Pools](https://github.com/stableex/sx.swap).
 
