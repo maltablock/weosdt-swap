@@ -22,21 +22,23 @@ public:
      * ## TABLE `settings`
      *
      * - `{int64_t} fee` - trading fee (pips 1/100 of 1%)
-     * - `{int64_t} amplifier` - liquidity pool amplifier
+     * - `{name} pricefeed_contract` - pricefeed contract
+     * - `{double} max_price_divergence` - percentage the liquidity pool price may diverge from oracle price
      *
      * ### example
      *
      * ```json
      * {
      *   "fee": 20,
-     *   "amplifier": 100
+     *   "pricefeed_contract": "oracle",
+     *   "max_price_divergence": "0.25"
      * }
      * ```
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
-        int64_t             amplifier;
         name                pricefeed_contract;
+        double              max_price_divergence;
     };
     typedef eosio::singleton< "settings"_n, params > settings;
 
@@ -141,7 +143,7 @@ public:
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx setparams '[{"fee": 10, "amplifier": 20}]' -p stable.sx
+     * cleos push action swap.sx setparams '[{"fee": 10}]' -p stable.sx
      * ```
      */
     [[eosio::action]]

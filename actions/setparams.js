@@ -24,9 +24,10 @@ async function action() {
       data: {
         params: {
           fee: 30,
-          amplifier: 1,
           pricefeed_contract: `globaloracle`,
+          max_price_divergence: 0.25,
         },
+        // params: undefined
       },
     });
     process.exit(0);

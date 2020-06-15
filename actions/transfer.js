@@ -25,7 +25,7 @@ async function action() {
     //   data: {
     //     from: RECEIVER,
     //     to: CONTRACT_ACCOUNT,
-    //     quantity: `40.00000000 WAX`,
+    //     quantity: `11.00000000 WAX`,
     //     memo: `WEOSDT`,
     //   },
     // });
@@ -46,6 +46,7 @@ async function action() {
         memo: `WAX`,
       },
     });
+
     process.exit(0);
   } catch (error) {
     console.error(error)

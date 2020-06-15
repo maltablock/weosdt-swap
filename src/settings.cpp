@@ -11,8 +11,7 @@ void swapSx::setparams( const optional<swapSx::params> params )
 
     check( params->fee <= 50, "fee cannot be greater than 0.5%");
     check( params->fee >= 0, "fee must be positive");
-    check( params->amplifier <= 100, "amplifier cannot be greater than 100x");
-    check( params->amplifier >= 0, "amplifier must be positive");
+    check( params->max_price_divergence >= 0, "max_price_divergence must be positive");
 
     _settings.set( *params, get_self() );
 }

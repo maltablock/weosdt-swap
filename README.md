@@ -18,9 +18,9 @@ Run the [`setparams` action](./actions/setparams.js) to set up the swap contract
 ```js
 params: {
     fee: 30,
-    amplifier: 1,
     pricefeed_contract: `globaloracle`,
-},
+    max_price_divergence: 0.25,
+}
 ```
 
 Open account balances for all tokens for the contract.
@@ -42,10 +42,22 @@ Then run the [`token` actions](./actions/token.js) to set up the tokens:
         symcode: "WAX",
         contract: `eosio.token`,
     },
-},
+}
 ```
 
 ### Set up liquidity
 
 To deposit initial liquidity send a transfer with the `fund` memo.
 
+```js
+ {
+    account: `eosio.token`,
+    name: `transfer`,
+    data: {
+        from: ACCOUNT,
+        to: CONTRACT_ACCOUNT,
+        quantity: `10.00000000 WAX`,
+        memo: `fund`,
+    },
+}
+```

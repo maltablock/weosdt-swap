@@ -5,8 +5,6 @@ TABLE priceaverage {
 typedef eosio::singleton<"priceaverage"_n, priceaverage> priceaverage_t;
 
 void swapSx::check_price_within_feed() {
-  constexpr double allowed_divergence_percentage = 0.2;
-
   swapSx::tokens_table _tokens(get_self(), get_self().value);
   swapSx::spotprices_table _spotprices(get_self(), get_self().value);
   swapSx::settings _settings(get_self(), get_self().value);
@@ -35,7 +33,7 @@ void swapSx::check_price_within_feed() {
     double spot_price = spotprices.quotes[quote];
     double oracle_price = priceavg.price;
 
-    check(fabs(spot_price - oracle_price) / oracle_price <= allowed_divergence_percentage,
+    check(fabs(spot_price - oracle_price) / oracle_price <= settings.max_price_divergence,
           "trade would move price outside of reasonable range (spot: " +
               std::to_string(spot_price) + ", oracle: " + std::to_string(oracle_price) + ")");
   }
