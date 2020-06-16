@@ -1,7 +1,8 @@
 const initEnvironment = require(`eosiac`);
 
+const envName = process.env.EOSIAC_ENV || `waxtest`
 const { sendTransaction, env } = initEnvironment(
-  process.env.EOSIAC_ENV || `waxtest`,
+  envName,
   { verbose: true }
 );
 
@@ -9,6 +10,7 @@ const accounts = Object.keys(env.accounts);
 
 const CONTRACT_ACCOUNT = accounts[1];
 const TOKEN_ACCOUNT = accounts[2];
+const FEES_ACCOUNT = envName === `wax` ? `waxmeetup111` : `cmichelonwax`
 
 async function action() {
   try {
@@ -24,6 +26,7 @@ async function action() {
       data: {
         params: {
           fee: 30,
+          fee_account: FEES_ACCOUNT,
           pricefeed_contract: `globaloracle`,
           max_price_divergence: 0.25,
         },

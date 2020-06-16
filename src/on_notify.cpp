@@ -4,12 +4,8 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
   // authenticate incoming `from` account
   require_auth(from);
 
-  // check if contract maintenance is ongoing
-  swapSx::settings _settings(get_self(), get_self().value);
-  check(_settings.exists(), "contract is currently disabled for maintenance");
-
   const symbol_code in_symcode = quantity.symbol.code();
-  check_is_active(in_symcode, get_first_receiver());
+  check_token_exists(in_symcode, get_first_receiver());
   check(from == get_self() || to == get_self(),
         "not involved in this transfer");
 
@@ -26,8 +22,9 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
   if (ignore.find(from) != ignore.end())
     return;
 
+  // handle liquidity providing transfers
   if (memo == "fund") {
-    // add/remove liquidity depth (must be sent using `sx` account)
+    // add/remove liquidity depth
     set_balance(quantity.symbol.code());
     update_spot_prices(base_symbol.code());
     if (from == get_self())
@@ -36,6 +33,12 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
       add_depth(quantity);
     return;
   }
+
+  // check if contract maintenance is ongoing
+  swapSx::settings _settings(get_self(), get_self().value);
+  check(_settings.exists(), "contract is currently disabled for maintenance");
+  auto settings = _settings.get();
+  check(settings.fee_account.value > 0, "fee_account not set in settings");
 
   // update balances (post convert transfer, triggered by `on_notify`)
   // just mirrors the token contracts accounts row
@@ -52,7 +55,7 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // validate input
   const symbol_code out_symcode = parse_memo_symcode(memo);
-  check_is_active(out_symcode, name{});
+  check_token_exists(out_symcode, name{});
   check(in_symcode != out_symcode,
         in_symcode.to_string() + " symbol code cannot be the same as quantity");
 
@@ -65,7 +68,7 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // send transfers
   self_transfer(from, rate, "convert");
-  self_transfer(fee_account, fee, "fee");
+  self_transfer(settings.fee_account, fee, "fee");
 
   // post transfer
   update_volume(vector<asset>{quantity, rate}, fee);

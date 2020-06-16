@@ -97,7 +97,7 @@ void swapSx::check_min_ratio( const asset out )
     check( static_cast<double>(remaining.amount) / depth.amount >= 0.2, out.symbol.code().to_string() + " balance/depth ratio must be above 20%" );
 }
 
-void swapSx::check_is_active( const symbol_code symcode, const name contract )
+void swapSx::check_token_exists( const symbol_code symcode, const name contract )
 {
     swapSx::tokens_table _tokens( get_self(), get_self().value );
     auto token = _tokens.find( symcode.raw() );

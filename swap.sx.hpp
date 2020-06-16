@@ -11,7 +11,6 @@
 using namespace eosio;
 using namespace std;
 
-constexpr name fee_account = name("cmichelonwax");
 constexpr symbol base_symbol = symbol("WEOSDT", 9);
 
 class [[eosio::contract("swap.sx")]] swapSx : public contract {
@@ -37,6 +36,7 @@ public:
      */
     struct [[eosio::table("settings")]] params {
         int64_t             fee;
+        name                fee_account;
         name                pricefeed_contract;
         double              max_price_divergence;
     };
@@ -237,7 +237,7 @@ private:
     void add_depth( const asset quantity );
     void sub_depth( const asset quantity );
 
-    void check_is_active( const symbol_code symcode, const name contract );
+    void check_token_exists( const symbol_code symcode, const name contract );
     void check_max_ratio( const symbol_code symcode );
     void check_min_ratio( const asset out );
 

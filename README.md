@@ -11,17 +11,8 @@ The prices of the underlying assets are taken from medians of 24-hour spot price
 
 ## Quickstart
 
-### Setup
+### Setup Tokens
 
-Run the [`setparams` action](./actions/setparams.js) to set up the swap contract:
-
-```js
-params: {
-    fee: 30,
-    pricefeed_contract: `globaloracle`,
-    max_price_divergence: 0.25,
-}
-```
 
 Open account balances for all tokens for the contract.
 Then run the [`token` actions](./actions/token.js) to set up the tokens:
@@ -45,6 +36,7 @@ Then run the [`token` actions](./actions/token.js) to set up the tokens:
 }
 ```
 
+
 ### Set up liquidity
 
 To deposit initial liquidity send a transfer with the `fund` memo.
@@ -61,3 +53,17 @@ To deposit initial liquidity send a transfer with the `fund` memo.
     },
 }
 ```
+
+### Enable trading
+
+Run the [`setparams` action](./actions/setparams.js) to set up the swap contract and enable conversions:
+
+```js
+params: {
+    fee: 30,
+    fee_account: `waxmeetup111`,
+    pricefeed_contract: `globaloracle`,
+    max_price_divergence: 0.25,
+}
+```
+
