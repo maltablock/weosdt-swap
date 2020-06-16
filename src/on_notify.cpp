@@ -26,7 +26,7 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
   if (memo == "fund") {
     // add/remove liquidity depth
     set_balance(quantity.symbol.code());
-    update_spot_prices(base_symbol.code());
+    update_spot_prices();
     if (from == get_self())
       sub_depth(quantity);
     else if (to == get_self())
@@ -34,24 +34,15 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
     return;
   }
 
+  // check incoming converts now
+  if (to != get_self())
+    return;
+
   // check if contract maintenance is ongoing
   swapSx::settings _settings(get_self(), get_self().value);
   check(_settings.exists(), "contract is currently disabled for maintenance");
   auto settings = _settings.get();
   check(settings.fee_account.value > 0, "fee_account not set in settings");
-
-  // update balances (post convert transfer, triggered by `on_notify`)
-  // just mirrors the token contracts accounts row
-  // only update for outgoing tx (from == _self)
-  if (from == get_self() && (memo == "convert" || memo == "fee")) {
-    set_balance(quantity.symbol.code());
-    update_spot_prices(base_symbol.code());
-    check_price_within_feed();
-  }
-
-  // check incoming converts now
-  if (to != get_self())
-    return;
 
   // validate input
   const symbol_code out_symcode = parse_memo_symcode(memo);
@@ -68,9 +59,20 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // send transfers
   self_transfer(from, rate, "convert");
-  self_transfer(settings.fee_account, fee, "fee");
+  if ( fee.amount ) self_transfer(settings.fee_account, fee, "fee");
 
-  // post transfer
   update_volume(vector<asset>{quantity, rate}, fee);
-  set_balance(quantity.symbol.code());
+  
+  // update balances `on_notify` inline transaction
+  // prevents re-entry exploit
+  add_balance( quantity - fee );
+  sub_balance( rate );
+  update_spot_prices();
+
+  check_price_within_feed();
+
+  // trade log
+  const double trade_price = asset_to_double( rate ) / asset_to_double( quantity );
+  swapSx::log_action log( get_self(), { get_self(), "active"_n });
+  log.send( from, quantity, rate, fee, trade_price );
 }
