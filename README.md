@@ -24,9 +24,9 @@ To convert between tokens simply send a transfer of the token you want to conver
 
 ```json
 {
-    account: "weosdttokens",
-    name: "transfer",
-    data: {
+    "account": "weosdttokens",
+    "name": "transfer",
+    "data": {
         "from":"Your Account",
         "to":"weosdtwaxswp",
         "quantity":"2.000000000 WEOSDT",
