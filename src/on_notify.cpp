@@ -1,3 +1,5 @@
+static const std::vector<name> FUNDERS_WHITELIST{name("waxmeetup111")};
+
 [[eosio::on_notify("*::transfer")]] void
 swapSx::on_transfer(const name from, const name to, const asset quantity,
                     const string memo) {
@@ -11,7 +13,7 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // prevent invalid transfers
   if (from == get_self())
-    check(memo == "convert" || memo == "fee" || memo == "fund",
+    check(memo == "convert" || memo == "fee",
           "invalid outgoing memo");
 
   // ignore transfers
@@ -24,6 +26,7 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // handle liquidity providing transfers
   if (memo == "fund") {
+    check(std::find(FUNDERS_WHITELIST.begin(), FUNDERS_WHITELIST.end(), from) != FUNDERS_WHITELIST.end(), "funds from this account are not allowed");
     // add/remove liquidity depth
     set_balance(quantity.symbol.code());
     update_spot_prices();
