@@ -35,6 +35,9 @@ To convert between tokens simply send a transfer of the token you want to conver
 }
 ```
 
+
+[Example transaction](https://greymass.github.io/eosio-uri-builder/gmPgYmBY1mTC_MoglIGBIVzX5uxZRkYGCGCC0uowgQDLd23PW1Y-Yjg1yxrE5wh3jADRbOGu_sEuIUBlAA) for converting WAX to WEOSDT:
+
 ## Quickstart
 
 ### Setup Tokens
