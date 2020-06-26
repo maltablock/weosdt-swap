@@ -1,6 +1,6 @@
 # WAX <> WEOSDT Swap Pool with circuit breaker
 
-Based on [SX Swap Pools](https://github.com/stableex/sx.swap).
+Based on [SX Amplified Liquidity Pools](https://github.com/stableex/sx.swap).
 
 > Automated Liquidity Pool with circuit breaker
 

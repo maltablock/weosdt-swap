@@ -83,15 +83,15 @@ public:
      *
      * ```json
      * {
-     *   "timestamp": "2020-06-03T00:00:00",
-     *   "volume": [
-     *     {"key": "EOSDT", "value": "25.000000000 EOSDT"},
-     *     {"key": "USDT", "value": "100.0000 USDT"}
-     *   ],
-     *   "fees": [
-     *     {"key": "EOSDT", "value": "0.100000000 EOSDT"},
-     *     {"key": "USDT", "value": "0.4000 USDT"}
-     *   ]
+     *     "timestamp": "2020-06-03T00:00:00",
+     *     "volume": [
+     *         {"key": "EOS", "value": "25.0000 EOS"},
+     *         {"key": "USDT", "value": "100.0000 USDT"}
+     *     ],
+     *     "fees": [
+     *         {"key": "EOS", "value": "0.1250 EOS"},
+     *         {"key": "USDT", "value": "0.5000 USDT"}
+     *     ]
      * }
      * ```
      */
@@ -185,11 +185,12 @@ public:
      * - `{asset} fee` - fee paid per trade
      * - `{double} trade_price` - trade price per unit
      * - `{double} spot_price` - spot price per rate
+     * - `{double} value` - total value of trade relative to spot price symbol
      *
      * ### example
      *
      * ```bash
-     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53]' -p swap.sx
+     * cleos push action swap.sx log '["myaccount", "1.0000 EOS", "2.5300 USDT", "0.0050 EOS", 2.53, 2.53, 2.53]' -p swap.sx
      * ```
      */
     [[eosio::action]]
@@ -197,7 +198,9 @@ public:
               const asset quantity,
               const asset rate,
               const asset fee,
-              const double trade_price);
+              const double trade_price,
+              const double base_quote_spot_price,
+              const double value);
 
     /**
      * Notify contract when any token transfer notifiers relay contract
@@ -361,4 +364,7 @@ private:
     // spot prices
     void update_spot_prices();
     double get_spot_price( const symbol_code base, const symbol_code quote );
+
+    // settings
+    void erase_all_tokens();
 };
