@@ -12,24 +12,6 @@ asset swapSx::get_depth( const symbol_code symcode )
     return token.depth;
 }
 
-void swapSx::set_balance( const symbol_code symcode )
-{
-    swapSx::tokens_table _tokens( get_self(), get_self().value );
-    auto itr = _tokens.find( symcode.raw() );
-    if ( itr == _tokens.end() ) return;
-
-    // get active token balance of self
-    const name contract = swapSx::get_contract( get_self(), symcode );
-    const asset balance = token::get_balance( contract, get_self(), symcode );
-
-    // ignore setting balance if the same
-    if ( itr->balance == balance ) return;
-
-    _tokens.modify( itr, same_payer, [&]( auto & row ) {
-        row.balance = balance;
-    });
-}
-
 void swapSx::add_balance( const asset quantity )
 {
     swapSx::tokens_table _tokens( get_self(), get_self().value );

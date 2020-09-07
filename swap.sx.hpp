@@ -1,4 +1,5 @@
 #pragma once
+// #define __TEST__
 
 #include <eosio/eosio.hpp>
 #include <eosio/system.hpp>
@@ -336,7 +337,11 @@ public:
 
 private:
     // utils
-    symbol_code parse_memo_symcode( const string memo );
+    struct parsed_memo {
+        symbol_code out_symcode;
+        int64_t expected_return;
+    };
+    parsed_memo parse_memo( const string memo );
     void self_transfer( const name to, const asset quantity, const string memo );
 
     // tokens
@@ -354,7 +359,6 @@ private:
     asset get_balance( const symbol_code symcode );
     asset get_depth( const symbol_code symcode );
 
-    void set_balance( const symbol_code symcode );
     void add_balance( const asset quantity );
     void sub_balance( const asset quantity );
 
