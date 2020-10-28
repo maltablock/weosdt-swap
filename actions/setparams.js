@@ -20,7 +20,7 @@ async function action() {
       authorization: [
         {
           actor: CONTRACT_ACCOUNT,
-          permission: `active`,
+          permission: `admin`,
         },
       ],
       data: {

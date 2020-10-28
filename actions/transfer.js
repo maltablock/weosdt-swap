@@ -43,7 +43,7 @@ async function action() {
         from: RECEIVER,
         to: CONTRACT_ACCOUNT,
         quantity: `1.500000000 WEOSDT`,
-        memo: `WAX,1950000000`,
+        memo: `WAX,0`,
       },
     });
 

@@ -33,8 +33,21 @@ void swapSx::check_price_within_feed() {
     double spot_price = spotprices.quotes[quote];
     double oracle_price = priceavg.price;
 
-    check(fabs(spot_price - oracle_price) / oracle_price <= settings.max_price_divergence,
+    check(fabs(spot_price - oracle_price) / oracle_price <=
+              settings.max_price_divergence,
           "trade would move price outside of reasonable range (spot: " +
-              std::to_string(spot_price) + ", oracle: " + std::to_string(oracle_price) + ")");
+              std::to_string(spot_price) +
+              ", oracle: " + std::to_string(oracle_price) + ")");
   }
+}
+
+void swapSx::checkbalanced(const symbol_code &base, const symbol_code &quote,
+                           double spotprice, double threshold) {
+  double current_spotprice = get_spot_price(base, quote);
+
+  check(threshold <= 0.1, "threshold must be between 0 and 0.1 (10%)");
+  check(
+      fabs(spotprice - current_spotprice) / current_spotprice <= threshold,
+      "spot price differed too much - expected: " + std::to_string(spotprice) +
+          ", actual: " + std::to_string(current_spotprice) + ")");
 }

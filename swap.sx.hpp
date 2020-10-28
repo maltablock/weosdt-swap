@@ -203,6 +203,14 @@ public:
               const double base_quote_spot_price,
               const double value);
 
+    [[eosio::action]]
+    void checkbalanced(const symbol_code &base, const symbol_code &quote,
+                           double spotprice, double threshold);
+
+    [[eosio::action]]
+    void withdraw(name to, const extended_asset &token0,
+                      const extended_asset &token1);
+
     /**
      * Notify contract when any token transfer notifiers relay contract
      */

@@ -1,7 +1,8 @@
 #ifdef __TEST__
-static const std::vector<name> FUNDERS_WHITELIST{name("cmichelkylin")};
+static const std::vector<name> FUNDERS_WHITELIST{name("cmichelonwax")};
 #else
-static const std::vector<name> FUNDERS_WHITELIST{name("waxmeetup111")};
+static const std::vector<name> FUNDERS_WHITELIST{name("waxmeetup111"),
+                                                 name("chongqingbnk")};
 #endif
 
 [[eosio::on_notify("*::transfer")]] void
@@ -30,15 +31,18 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // handle liquidity providing transfers
   if (memo == "fund") {
-    check(std::find(FUNDERS_WHITELIST.begin(), FUNDERS_WHITELIST.end(), from) !=
-              FUNDERS_WHITELIST.end(),
-          "funds from/to this account are not allowed");
 
     // add/remove liquidity depth + balances
     if (from == get_self()) {
+      check(std::find(FUNDERS_WHITELIST.begin(), FUNDERS_WHITELIST.end(), to) !=
+                FUNDERS_WHITELIST.end(),
+            "withdrawals to this account are not allowed");
       sub_depth(quantity);
       sub_balance(quantity);
     } else if (to == get_self()) {
+      check(std::find(FUNDERS_WHITELIST.begin(), FUNDERS_WHITELIST.end(),
+                      from) != FUNDERS_WHITELIST.end(),
+            "deposits from this account are not allowed");
       add_depth(quantity);
       add_balance(quantity);
     }
@@ -65,7 +69,8 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
 
   // calculate rates
   const asset fee = swapSx::get_fee(get_self(), quantity);
-  const asset rate = swapSx::get_rate(get_self(), quantity, memo_info.out_symcode);
+  const asset rate =
+      swapSx::get_rate(get_self(), quantity, memo_info.out_symcode);
 
   // validate output
   check(rate.amount > 0, "quantity would be zero");
@@ -83,7 +88,9 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
   sub_balance(rate);
   update_spot_prices();
 
-  check(rate.amount > memo_info.expected_return, "converted amount was lower than desired (slippage?) - converted to " + rate.to_string());
+  check(rate.amount > memo_info.expected_return,
+        "converted amount was lower than desired (slippage?) - converted to " +
+            rate.to_string());
   check_price_within_feed();
 
   // trade log
@@ -102,4 +109,26 @@ swapSx::on_transfer(const name from, const name to, const asset quantity,
   // enforce 1.00 trades (prevents spam)
   check(value >= 1.0, "minimum trade value must exceed 1.00 " +
                           base_symbol.code().to_string());
+}
+
+void swapSx::withdraw(name to, const extended_asset &token0,
+                      const extended_asset &token1) {
+  require_auth(to);
+
+  check(std::find(FUNDERS_WHITELIST.begin(), FUNDERS_WHITELIST.end(), to) !=
+            FUNDERS_WHITELIST.end(),
+        "withdrawals to this account are not allowed");
+
+  check(token0.get_extended_symbol() != token1.get_extended_symbol(),
+        "tokens must be different");
+  check_token_exists(token0.get_extended_symbol().get_symbol().code(),
+                     token0.get_extended_symbol().get_contract());
+  check_token_exists(token1.get_extended_symbol().get_symbol().code(),
+                     token1.get_extended_symbol().get_contract());
+
+  // fund memo is important to update balances in on_receive
+  if (token0.quantity.amount > 0)
+    self_transfer(to, token0.quantity, "fund");
+  if (token1.quantity.amount > 0)
+    self_transfer(to, token1.quantity, "fund");
 }
